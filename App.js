@@ -1,7 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, View, Keyboard } from 'react-native';
-import * as React from 'react';
 import { Provider as PaperProvider, Button, TextInput, Surface } from "react-native-paper";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -14,6 +15,8 @@ export default function App() {
 
   const Resultado = async () => {
     const Result = Peso / (Altura * Altura);
+    AsyncStorage.setItem("@Result", String(Result));
+
 
 
     if (Result >= 40) {
@@ -39,6 +42,27 @@ export default function App() {
     }
     setResult(Result)
   }
+
+  const getPeso = async () => {
+
+    try {
+      const value = await AsyncStorage.getItem("@Result");
+      if (value !== null) {
+        // se o value for diferente de null, quer dizer que já havia sido salvo anteriormente.
+        setResult(value);
+      }
+    } catch (e) {
+      // error reading value
+    }
+
+  };
+
+
+  useEffect(() => {
+    // recuperando valor no momento que a tela é aberta
+    getPeso();
+  }, []);
+
 
   return (
     <View style={styles.container}>
